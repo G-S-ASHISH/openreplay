@@ -1,5 +1,5 @@
 {
-  "name": "@openreplay/tracker",
+  "name": "@volopay/openreplay/tracker",
   "description": "The OpenReplay tracker main package",
   "version": "16.2.0",
   "keywords": [
