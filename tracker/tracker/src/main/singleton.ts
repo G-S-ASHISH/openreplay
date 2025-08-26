@@ -4,7 +4,8 @@ import type { StartOptions, StartPromiseReturn } from './app/index.js'
 
 class TrackerSingleton {
   private instance: Tracker | null = null
-  private isConfigured = false
+  private isConfigured = new Set<String>()
+  private projectKey: string | null = null
 
   /**
    * Call this method once to create tracker configuration
@@ -15,7 +16,7 @@ class TrackerSingleton {
     if (!IN_BROWSER) {
       return
     }
-    if (this.isConfigured) {
+    if (this.isConfigured.has(options.projectKey || '')) {
       console.warn(
         'OpenReplay: Tracker is already configured. You should only call configure once.',
       )
@@ -28,7 +29,8 @@ class TrackerSingleton {
     }
 
     this.instance = new Tracker(options)
-    this.isConfigured = true
+    this.isConfigured.add(options.projectKey)
+    this.projectKey = options.projectKey
   }
 
   get options(): Partial<Options> | null {
@@ -260,7 +262,7 @@ class TrackerSingleton {
   }
 
   private ensureConfigured() {
-    if (!this.isConfigured && IN_BROWSER) {
+    if (!this.isConfigured.has(this.projectKey || '') && IN_BROWSER) {
       console.warn(
         'OpenReplay: Tracker must be configured before use. Call tracker.configure({projectKey: "your-project-key"}) first.',
       )
@@ -349,4 +351,5 @@ class TrackerSingleton {
 
 const tracker = new TrackerSingleton()
 
+export { Tracker, App, Options, TrackerSingleton }
 export default tracker
